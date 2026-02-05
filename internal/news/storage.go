@@ -83,3 +83,26 @@ func DeletePost(id int) error {
 	// Сохраняем обновлённый список
 	return SavePosts(newPosts)
 }
+
+func UpdatePost(id int, updated Post) (Post, error) {
+	posts, err := LoadPosts()
+	if err != nil {
+		return Post{}, err
+	}
+
+	for i, post := range posts {
+		if post.ID == id {
+			posts[i].Title = updated.Title
+			posts[i].Content = updated.Content
+
+			err = SavePosts(posts)
+			if err != nil {
+				return Post{}, err
+			}
+
+			return posts[i], nil
+		}
+	}
+
+	return Post{}, os.ErrNotExist
+}
